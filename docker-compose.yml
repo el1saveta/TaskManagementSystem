@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - mq
+      - nosql
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/taskdb
+      - PYTHONUNBUFFERED=1
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: taskdb
+    ports:
+      - "5432:5432"
+  mq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  nosql:
+    image: mongo:6
+    ports:
+      - "27017:27017"
